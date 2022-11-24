@@ -5,31 +5,44 @@ import Layout from '~/layouts/PageLayout.astro';
 import SinglePost from '~/components/blog/SinglePost.astro';
 
 import { getCanonical, getPermalink, cleanSlug, POST_BASE } from '~/utils/permalinks';
-import { fetchPosts } from '~/utils/posts';
+// import { fetchPosts } from '~/utils/posts';
+import { getArticles } from '~/lib/api.js';
 import { findImage } from '~/utils/images';
 
 export async function getStaticPaths() {
-	if (BLOG?.disabled || BLOG?.post?.disabled) return [];
-
-	const posts = await fetchPosts();
-
-	return posts.map((post) => ({
-		params: {
-			slug: cleanSlug(post.slug),
-			blog: POST_BASE || undefined,
-		},
-		props: { post },
-	}));
+  const data = await getArticles();
+  return data.map((post) => {
+    return {
+      params: { slug: post.slug },
+      props: { post } };
+  });
 }
-
 const { post } = Astro.props;
 
+
+
+// export async function getStaticPaths() {
+// 	if (BLOG?.disabled || BLOG?.post?.disabled) return [];
+
+// 	const posts = await fetchPosts();
+
+// 	return posts.map((post) => ({
+// 		params: {
+// 			slug: cleanSlug(post.slug),
+// 			blog: POST_BASE || undefined,
+// 		},
+// 		props: { post },
+// 	}));
+// }
+
+// const { post } = Astro.props;
+
 const meta = {
-	title: `${post.title} — ${SITE.name}`,
-	description: post.description,
+	title: `${post.title.rendered} — ${SITE.name}`,
+	description: post.content.rendered,
 	canonical: post.canonical || getCanonical(getPermalink(post.slug, 'post')),
 	image: await findImage(post.image),
-	ogTitle: post.title,
+	ogTitle: post.title.rendered,
 	ogType: "article"
 };
 ---
@@ -37,3 +50,16 @@ const meta = {
 <Layout {meta}>
 	<SinglePost post={{ ...post, image: meta.image }} />
 </Layout>
+
+
+
+
+<!-- ---
+<Base>
+  <article class="prose lg:prose-xl mx-auto">
+    <h1>{post.title.rendered}</h1>
+    <div>
+        {post.content.rendered}
+    </div>
+  </article>
+</Base> -->

@@ -5,27 +5,43 @@ import Layout from '~/layouts/BlogLayout.astro';
 import BlogList from '~/components/blog/List.astro';
 import Pagination from '~/components/atoms/Pagination.astro';
 
-import { fetchPosts } from '~/utils/posts';
-import { getCanonical, getPermalink, BLOG_BASE } from '~/utils/permalinks';
+// import { fetchPosts } from '~/utils/posts';
+import { getArticles } from '~/lib/api.js';
+import { BLOG_BASE } from '~/utils/permalinks';
 
 export async function getStaticPaths({ paginate }) {
-	if (BLOG?.disabled || BLOG?.blog?.disabled) return [];
-
-	const posts = await fetchPosts();
+	const posts = await getArticles();
 
 	return paginate(posts, {
 		params: { blog: BLOG_BASE || undefined },
 		pageSize: BLOG.postsPerPage,
 	});
+//  getArticles();
+//   return data.map((post) => {
+//     return {
+//       params: { slug: post.slug },
+//       props: { post } };
+//   });
 }
-
 const { page } = Astro.props;
+// export async function getStaticPaths({ paginate }) {
+// 	if (BLOG?.disabled || BLOG?.blog?.disabled) return [];
+
+// 	const posts = await fetchPosts();
+
+// 	return paginate(posts, {
+// 		params: { blog: BLOG_BASE || undefined },
+// 		pageSize: BLOG.postsPerPage,
+// 	});
+// }
+
+// const { page } = Astro.props;
 const currentPage = page.currentPage ?? 1;
 
 const meta = {
 	title: `Blog ${currentPage > 1 ? `— Page ${currentPage} ` : ''}— ${SITE.name}`,
 	description: SITE.description,
-	canonical: getCanonical(getPermalink(page.url.current)),
+	canonical: page.slug,
 	ogType: "blog",
 	noindex: currentPage > 1
 };

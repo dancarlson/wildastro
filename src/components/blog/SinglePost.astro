@@ -16,7 +16,7 @@ const { post } = Astro.props;
 			<h1
 				class="px-4 sm:px-6 max-w-3xl mx-auto text-center text-4xl md:text-5xl font-bold leading-tighter tracking-tighter mb-8 font-heading"
 			>
-				{post.title}
+				{post.title.rendered}
 			</h1>
 			{
 				post.image && (
@@ -37,7 +37,7 @@ const { post } = Astro.props;
 			<Fragment set:html={post.body} />
 		</div>
 		<div class="container mx-auto px-8 sm:px-6 max-w-3xl mt-8">
-			<PostTags tags={post.tags} />
+			<!-- <PostTags tags={post.tags} /> -->
 		</div>
 	</article>
 </section>

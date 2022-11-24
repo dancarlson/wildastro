@@ -8,7 +8,8 @@ import { getFormattedDate } from '~/utils/utils';
 
 const { post } = Astro.props;
 
-const image = await findImage(post.image);
+const image = await findImage(post.yoast_head_json.og_image[0].url);
+console.log(post._embedded);
 ---
 
 <article class="max-w-md mx-auto md:max-w-none grid md:grid-cols-2 gap-6 md:gap-8">
@@ -21,7 +22,7 @@ const image = await findImage(post.image);
 				class="absolute inset-0 object-cover w-full h-full mb-6 rounded shadow-lg bg-gray-400 dark:bg-slate-700"
 				widths={[400, 900]}
 				sizes="(max-width: 900px) 400px, 900px"
-				alt={post.title}
+				alt={post.title.rendered}
 				aspectRatio="16:9"
 			/>
 		</div>
@@ -33,22 +34,22 @@ const image = await findImage(post.image);
 					class="hover:text-primary-600 underline underline-offset-4 decoration-1 decoration-dotted transition ease-in duration-200"
 					href={getPermalink(post.slug, 'post')}
 				>
-					{post.title}
+					{post.title.rendered}
 				</a>
 			</h2>
 		</header>
 		<p class="text-md sm:text-lg flex-grow">
-			{post.excerpt || post.description}
+			{post.excerpt.rendered || post.content.rendered}
 		</p>
 		<footer class="mt-4">
 			<div>
 				<span class="text-gray-500 dark:text-slate-400">
-					<time datetime={post.pubDate}>{getFormattedDate(post.pubDate)}</time> ~
+					<time datetime={post.date}>{getFormattedDate(post.date)}</time> ~
 					{Math.ceil(post.readingTime)} min read
 				</span>
 			</div>
 			<div class="mt-4">
-				<PostTags tags={post.tags} />
+				<!-- <PostTags tags={post.tags} /> -->
 			</div>
 		</footer>
 	</div>
